@@ -1,20 +1,12 @@
 package net.clonecomputers.lab.extra.draw3d;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public class Draw3D extends JPanel implements Runnable {
 	private BufferedImage canvas;
-	
-	public Draw3D(Dimension dim) {
-		this.setPreferredSize(dim);
-		canvas = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
-	}
 
 	public static void main(String[] args) {
 		if(args.length == 1) args = args[0].split("[,]");
@@ -37,6 +29,12 @@ public class Draw3D extends JPanel implements Runnable {
 		window.setVisible(true);
 		draw.run();
 	}
+	
+	public Draw3D(Dimension dim) {
+		this.setPreferredSize(dim);
+		canvas = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+	}
+
 	
 	@Override
 	public void paintComponent(Graphics g) {
