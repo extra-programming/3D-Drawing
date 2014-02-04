@@ -3,6 +3,7 @@ package net.clonecomputers.lab.extra.draw3d;
 
 import java.awt.*;
 import java.awt.image.*;
+
 import javax.swing.*;
 
 public class Draw3D extends JPanel implements Runnable {
@@ -32,13 +33,13 @@ public class Draw3D extends JPanel implements Runnable {
 	
 	public Draw3D(Dimension dim) {
 		this.setPreferredSize(dim);
-		canvas = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+		canvas = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
 	}
 
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		g.drawImage(canvas, 0, 0, this);
+		g.drawImage(canvas, 0, 0, Color.WHITE, this);
 	}
 
 	@Override

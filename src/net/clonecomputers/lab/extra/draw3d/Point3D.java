@@ -56,4 +56,23 @@ public class Point3D {
 		return abs(sum(a,product(b,-1)));
 	}
 	
+	
+	
+	
+	public double getPhi() {
+		return asin(z/abs(this));
+	}
+	
+	public double getTheta() {
+		return atan2(x,y);
+	}
+	
+	public double getR() {
+		return abs(this);
+	}
+	
+	public static Point3D polar(double phi, double theta, double r) {
+		return new Point3D(r*cos(phi)*cos(theta), r*cos(phi)*sin(theta), r*sin(phi));
+	}
+	
 }
