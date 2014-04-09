@@ -2,16 +2,18 @@
 
 ---
 ###Description:
-It does stuff.  
+It uses raycasting to render a scene
 
 ---
 ###Goals:
 ####Completed:
-* none so far
+* basic functionality
 
+####Bugs to fix
+* polygons don't check if points are contained in them
 
 ####Short Term Plans:
-* make better readme
+* build example scene
 
 ####Long Term Plans:
-* make it work
+* textures
