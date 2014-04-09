@@ -24,7 +24,8 @@ public class Camera {
 	public Camera(Ray direction, double xViewSize, double yViewSize) {
 		this.xViewSize = xViewSize;
 		this.yViewSize = yViewSize;
-		setDirection(direction);
+		this.direction = direction;
+		update();
 	}
 	
 	public Ray getDirection() {
@@ -33,10 +34,32 @@ public class Camera {
 	
 	public void setDirection(Ray direction) {
 		this.direction = direction;
+		update();
+	}
+
+	/**
+	 * set the viewangle in radians
+	 * @param xViewSize IN RADIANS
+	 */
+	public void setXViewSize(double xViewSize) {
+		this.xViewSize = xViewSize;
+		update();
+	}
+	
+	/**
+	 * set the viewangle in radians
+	 * @param yViewSize IN RADIANS
+	 */
+	public void setYViewSize(double yViewSize) {
+		this.yViewSize = yViewSize;
+		update();
+	}
+	
+	public void update() {
 		right = cross(direction.getDirection(), new Point3D(0,0,1));
 		up = cross(right, direction.getDirection());
-		right = product(normalize(right), Math.tan(xViewSize));
-		up = product(normalize(up), Math.tan(yViewSize));
+		right = prod(norm(right), Math.tan(xViewSize));
+		up = prod(norm(up), Math.tan(yViewSize));
 	}
 	
 	/**
@@ -56,10 +79,10 @@ public class Camera {
 				double xDeclination = (x - w/2)/(w/2);
 				double yDeclination = (h/2 - y)/(h/2);
 				Ray r = new Ray(direction.getLocation(),
-						normalize(sum(
+						norm(sum(
 								direction.getDirection(),
-								product(up,yDeclination),
-								product(right,xDeclination))));
+								prod(up,yDeclination),
+								prod(right,xDeclination))));
 				data[x+(y*canvas.getWidth())] = world.traceRay(r).getRGB();
 			}
 		}

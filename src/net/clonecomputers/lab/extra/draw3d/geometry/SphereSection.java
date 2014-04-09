@@ -1,11 +1,15 @@
 package net.clonecomputers.lab.extra.draw3d.geometry;
 
 import static net.clonecomputers.lab.extra.draw3d.Point3D.*;
+import static java.lang.Math.*;
 import net.clonecomputers.lab.extra.draw3d.*;
 import net.clonecomputers.lab.extra.draw3d.geometry.*;
 
 public class SphereSection implements SurfaceGeometry {
 	private Point3D center;
+	/**
+	 * a vector from the center of the sphere to the center of the sphereSection
+	 */
 	private Point3D radius;
 	private double arcsize;
 	
@@ -14,23 +18,49 @@ public class SphereSection implements SurfaceGeometry {
 	 */
 	private double radiusL;
 	
+	private double maximumDistanceFromRadius;
+	
+	/**
+	 * 
+	 * @param center the center of the sphere
+	 * @param radius a vector from the center of the sphere to the center of the sphereSection
+	 * @param arcsize the arc size in radians (pi for a full circle)
+	 */
 	public SphereSection(Point3D center, Point3D radius, double arcsize) {
 		this.center = center;
 		this.radius = radius;
 		this.arcsize = arcsize;
-		this.radiusL = dist(center, radius);
+		this.radiusL = abs(radius);
+		this.maximumDistanceFromRadius = radiusL*abs(2*sin(arcsize/2));
+		System.out.println(maximumDistanceFromRadius);
 	}
 	
 	@Override
-	public Point3D getIntersection(Ray r) {
-		Point3D tCenter = r.translateToViewframe(center);
-		//TODO: not implemented
-		return null;
+	public Point3D getIntersection(Ray ray) {
+		double distanceFromCenter = abs(cross(diff(center,ray.getLocation()),ray.getDirection()));
+		if(distanceFromCenter >= radiusL) return null;
+		
+		//now we know it intersects the sphere – but where?
+		Point3D l = ray.getDirection();
+		Point3D o = ray.getLocation();
+		Point3D c = center;
+		double r = radiusL;
+		Point3D omc = diff(o,c);
+		double ldomc = dot(l, omc);
+		double distance1 = -ldomc - sqrt(ldomc*ldomc - dot(omc,omc) + r*r);
+		double distance2 = -ldomc + sqrt(ldomc*ldomc - dot(omc,omc) + r*r);
+		Point3D intersection1 = sum(ray.getLocation(), prod(ray.getDirection(), distance1));
+		Point3D intersection2 = sum(ray.getLocation(), prod(ray.getDirection(), distance2));
+		
+		Point3D intersection = intersection1;
+		if(dist(intersection,sum(center,radius)) > maximumDistanceFromRadius) intersection = intersection2;
+		if(dist(intersection,sum(center,radius)) > maximumDistanceFromRadius) return null;
+		
+		return intersection;
 	}
 
 	@Override
 	public Point3D getNormal(Point3D p) {
-		// TODO Auto-generated method stub
-		return null;
+		return norm(diff(p,center));
 	}
 }

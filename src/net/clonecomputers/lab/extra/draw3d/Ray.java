@@ -5,7 +5,7 @@ import static net.clonecomputers.lab.extra.draw3d.Point3D.*;
 
 public class Ray {
 	private Point3D location;
-	private Point3D direction; // vector
+	private Point3D direction; // unit vector
 	
 	public Ray(Point3D location, Point3D directon) {
 		this.location = location;
@@ -39,14 +39,14 @@ public class Ray {
 	 * @return the relative vector when this ray is at the origin facing in the negative x direction
 	 */
 	public Point3D translateToViewframe(Point3D p) { //TODO: test me
-		Point3D translated = sum(p,product(location, -1));
+		Point3D translated = sum(p,prod(location, -1));
 		
 		Point3D p2 = polar(translated.getPhi(), translated.getTheta() - direction.getTheta(), translated.getR());
 		double xzDistance = hypot(p2.x, p2.z);
 		double xzAngle = atan2(p2.z,p2.x);
 		Point3D rotated = new Point3D(xzDistance*cos(xzAngle+direction.getPhi()),p2.y,xzDistance*sin(xzAngle+direction.getPhi()));
 		
-		Point3D scaled = product(rotated, direction.getR());
+		Point3D scaled = prod(rotated, direction.getR());
 		
 		return scaled;
 	}

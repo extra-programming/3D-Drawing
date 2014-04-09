@@ -30,6 +30,7 @@ public class Draw3D extends JPanel implements Runnable {
 			dim = new Dimension(600, 600);
 		}
 		JFrame window = new JFrame("3D Drawing Program!");
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Draw3D draw = new Draw3D(dim);
 		window.setContentPane(draw);
 		window.pack();
@@ -50,18 +51,19 @@ public class Draw3D extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
-		Camera c = new Camera(new Ray(new Point3D(0, 0, 0), new Point3D(1, 0, 0)), 30, 40);
+		Camera c = new Camera(new Ray(new Point3D(-100, 0, 0), new Point3D(1, 0, 0)), 40*Math.PI/180, 40*Math.PI/180);
 		World world = new World(Arrays.asList(
 				new Surface(
-					new SphereSection(new Point3D(0, 0, 0), new Point3D(2,0,0), 5),
+					new SphereSection(new Point3D(0, 6, 0), new Point3D(-10,20,20), Math.PI/3),
 					new SolidColor(Color.GREEN)
 				),
 				new Surface(
-						new Polygon(Arrays.asList(new Point3D(1,1,0),new Point3D(1,-1,1),new Point3D(1, -1, -1))),
+						new Polygon(Arrays.asList(new Point3D(0,1,0),new Point3D(0,-1,1),new Point3D(0, -1, -1))),
 						new SolidColor(Color.RED)
 					)
 			), new Color(.2f,.3f,.8f));
 		c.render(canvas, world);
+		this.repaint();
 	}
 
 }
