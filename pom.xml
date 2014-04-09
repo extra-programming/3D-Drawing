@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.clonecomputers.extra</groupId>
   <artifactId>3D-Drawing</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <name>3D drawing program</name>
   <description>a program that draws 3D objects</description>
   <build>
