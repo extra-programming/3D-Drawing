@@ -7,12 +7,10 @@ It uses raycasting to render a scene
 ---
 ###Goals:
 ####Completed:
-* basic functionality (almost)
-  - will be done when polygon bug is fixed
-  - completing this should warrant version 0.1.0-SNAPSHOT
+* basic functionality
 
 ####Bugs to fix
-* polygons don't check if points are contained in them
+* no known bugs
 
 ####Short Term Plans:
 * build example scene
