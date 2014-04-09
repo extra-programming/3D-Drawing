@@ -58,7 +58,7 @@ public class Draw3D extends JPanel implements Runnable {
 					new SolidColor(Color.GREEN)
 				),
 				new Surface(
-						new Polygon(Arrays.asList(new Point3D(0,1,0),new Point3D(0,-1,1),new Point3D(0, -1, -1))),
+						new Polygon(Arrays.asList(new Point3D(0,20,0),new Point3D(0,-20,20),new Point3D(0, -20, -20))),
 						new SolidColor(Color.RED)
 					)
 			), new Color(.2f,.3f,.8f));
