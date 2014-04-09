@@ -62,4 +62,14 @@ public class SphereSection implements SurfaceGeometry {
 	public Point3D getNormal(Point3D p) {
 		return norm(diff(p,center));
 	}
+
+	@Override
+	public Point2D getTextureCoordinates(Point3D p) {
+		double r = 2*asin(dist(p,radius)/2);
+		Point3D angle0 = cross(radius, new Point3D(1,0,0));
+		if(abs(angle0) < .0001) angle0 = cross(diff(radius,center),new Point3D(0,1,0));
+		Point3D angle = cross(radius,diff(p,center));
+		double theta = dot(norm(angle0), norm(angle));
+		return new Point2D(r*cos(theta), r*sin(theta));
+	}
 }

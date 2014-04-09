@@ -22,4 +22,15 @@ public interface SurfaceGeometry {
 	 * @return the normal vector
 	 */
 	public Point3D getNormal(Point3D p);
+	
+	/**
+	 * Maps the given point to two dimensions,
+	 * in a way that should be fairly undistorted,
+	 * for use in placing a tiling texture on this object.
+	 * @param p the point to map to texture coordinates
+	 * Assumed to be on the surface
+	 * @return the "texture coordinates" of the given point.
+	 * this can be anywhere in the euclidean plane.
+	 */
+	public Point2D getTextureCoordinates(Point3D p);
 }

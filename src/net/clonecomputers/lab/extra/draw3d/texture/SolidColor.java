@@ -12,7 +12,7 @@ public class SolidColor implements Texture {
 	}
 	
 	@Override
-	public Color getRayColor(Ray r, Ray normal) {
+	public Color getRayColor(Ray r, Ray normal, Point2D textureCoordinates) {
 		return color;
 	}
 

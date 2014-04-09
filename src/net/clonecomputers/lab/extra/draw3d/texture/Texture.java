@@ -15,5 +15,5 @@ public interface Texture {
 	 * @return the color that a ray will
 	 * appear to have after colliding with this surface.
 	 */
-	public Color getRayColor(Ray r, Ray normal);
+	public Color getRayColor(Ray r, Ray normal, Point2D textureCoordinates);
 }

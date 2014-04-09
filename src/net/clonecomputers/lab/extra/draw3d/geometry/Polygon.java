@@ -33,16 +33,36 @@ public class Polygon implements SurfaceGeometry {
 		this.normal = norm(cross(diff(points.get(1),points.get(0)),diff(points.get(2),points.get(0))));
 		List<Point2D> projectedPoints = new ArrayList<Point2D>();
 		for(Point3D p: points) {
-			projectedPoints.add(getInPlane(p));
+			projectedPoints.add(getTextureCoordinates(p));
 		}
 		hull = ConvexHullTester.getConvexHull(projectedPoints);
-		System.out.println(hull);
 	}
 	
-	private Point2D getInPlane(Point3D p) {
+	@Override
+	public Point2D getTextureCoordinates(Point3D p) {
 		int axis = 0;
 		if(dot(normal, new Point3D(1,0,0)) < .0001) axis = 1;
 		if(axis == 1 && dot(normal, new Point3D(0,1,0)) < .0001) axis = 2;
+		Point3D axisVector;
+		switch(axis) {
+		case 0: // x axis
+			axisVector = new Point3D(1,0,0);
+			break;
+		case 1: // y axis
+			axisVector = new Point3D(0,1,0);
+			break;
+		case 2: // z axis
+			axisVector = new Point3D(0,0,1);
+			break;
+		default:
+			throw new InternalError("invalid axis: this should never happen");
+	}
+		Point3D paralell = cross(axisVector, normal);
+		Point3D inPlane;
+		if(abs(paralell) > .001) { // distorted
+			Point3D slope = cross(paralell, normal);
+			inPlane = new Point3D(p.x*abs(slope)/slope.x, p.y*abs(slope)/slope.y, p.z*abs(slope)/slope.z);
+		}
 		switch(axis) {
 			case 0: // project onto yz plane
 				return new Point2D(p.y,p.z);
@@ -60,7 +80,7 @@ public class Polygon implements SurfaceGeometry {
 		double distance = dot(diff(points.get(0),r.getLocation()),normal) / dot(r.getDirection(), normal);
 		Point3D intersection = sum(r.getLocation(), prod(r.getDirection(), distance));
 		
-		if(!ConvexHullTester.isInsideConvexHull(hull, getInPlane(intersection))) return null;
+		if(!ConvexHullTester.isInsideConvexHull(hull, getTextureCoordinates(intersection))) return null;
 		
 		return intersection;
 	}

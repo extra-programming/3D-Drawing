@@ -34,11 +34,12 @@ public class Surface {
 	 * after finding the intersection, so that is
 	 * mor efficient if the intersection is already known.
 	 * @param r the ray
-	 * @return The color that a ray will
+	 * @return The color that a ray will, or null if it doesn't intersect
 	 * appear to have after colliding with this surface.
 	 */
 	public Color getRayColor(Ray r) {
 		Point3D intersection = geometry.getIntersection(r);
+		if(intersection == null) return null;
 		return getRayColor(r, intersection);
 	}
 	
@@ -49,11 +50,13 @@ public class Surface {
 	 * return the color the reflected or refracted ray finds.
 	 * @param r the ray
 	 * @param intersection the intersection of the ray with this surface
-	 * @return The color that a ray will
-	 * appear to have after colliding with this surface.
+	 * @return The color that a ray will appear to have
+	 * after colliding with this surface.
 	 */
 	public Color getRayColor(Ray r, Point3D intersection) {
-		return texture.getRayColor(r, new Ray(intersection, geometry.getNormal(intersection)));
+		return texture.getRayColor(r,
+				new Ray(intersection,geometry.getNormal(intersection)),
+				geometry.getTextureCoordinates(intersection));
 	}
 
 }

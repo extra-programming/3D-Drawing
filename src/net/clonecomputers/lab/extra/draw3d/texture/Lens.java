@@ -3,7 +3,6 @@ package net.clonecomputers.lab.extra.draw3d.texture;
 import java.awt.*;
 
 import static net.clonecomputers.lab.extra.draw3d.Point3D.*;
-
 import net.clonecomputers.lab.extra.draw3d.*;
 
 public class Lens implements Texture {
@@ -18,7 +17,7 @@ public class Lens implements Texture {
 	}
 
 	@Override
-	public Color getRayColor(Ray ray, Ray normal) {
+	public Color getRayColor(Ray ray, Ray normal, Point2D textureCoordinates) {
 		Point3D l = ray.getDirection();
 		Point3D n = normal.getDirection();
 		double r = indexOfRefractionRatio;
