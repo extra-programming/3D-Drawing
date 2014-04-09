@@ -32,7 +32,6 @@ public class SphereSection implements SurfaceGeometry {
 		this.arcsize = arcsize;
 		this.radiusL = abs(radius);
 		this.maximumDistanceFromRadius = radiusL*abs(2*sin(arcsize/2));
-		System.out.println(maximumDistanceFromRadius);
 	}
 	
 	@Override
