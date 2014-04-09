@@ -9,11 +9,18 @@ import net.clonecomputers.lab.extra.draw3d.geometry.*;
 
 public class Polygon implements SurfaceGeometry {
 	/**
-	 * No 3 consecutive points may be colinear
+	 * The first 3 points MUST not be colinear.
+	 * All points are assumed to be coplanar.
 	 */
 	private List<Point3D> points;
 	private Point3D normal; // vector
 	
+	/**
+	 * Makes a polygon with the specified points.
+	 * The first 3 points MUST not be colinear.
+	 * All points are assumed to be coplanar.
+	 * @param points
+	 */
 	public Polygon(List<Point3D> points) {
 		this.points = points;
 		this.normal = norm(cross(diff(points.get(1),points.get(0)),diff(points.get(2),points.get(0))));
