@@ -1,26 +1,67 @@
 package net.clonecomputers.lab.extra.draw3d;
 
-import static java.lang.Math.*;
+import static net.clonecomputers.lab.extra.draw3d.Point3D.*;
+import java.awt.*;
+import java.awt.image.*;
 
 public class Camera {
-	private Point3D location;
-	private Point3D direction; // vector
+	private Ray direction;
+	/**
+	 * A vector that is normal to direction and right
+	 * with a magnitude that when added to a unit
+	 * vector gives the required view size
+	 */
+	private Point3D up;
+	/**
+	 * A vector that is normal to direction and up
+	 * with a magnitude that when added to a unit
+	 * vector gives the required view size
+	 */
+	private Point3D right;
+	private double xViewSize;
+	private double yViewSize;
+	
+	public Camera(Ray direction, double xViewSize, double yViewSize) {
+		this.xViewSize = xViewSize;
+		this.yViewSize = yViewSize;
+		setDirection(direction);
+	}
+	
+	public Ray getDirection() {
+		return direction;
+	}
+	
+	public void setDirection(Ray direction) {
+		this.direction = direction;
+		right = cross(direction.getDirection(), new Point3D(0,0,1));
+		up = cross(right, direction.getDirection());
+		right = product(normalize(right), Math.tan(xViewSize));
+		up = product(normalize(up), Math.tan(yViewSize));
+	}
 	
 	/**
-	 * MIGHT BE BROKEN
-	 * @param p the point to translate
-	 * @return where it should be rendered with the camera at the origin facing in the negative x direction
+	 * renders a world to a canvas, from it's viewpoint
+	 * @param canvas must have the default INT_ARGB color model
+	 * @param world the world of objects to render
 	 */
-	public Point3D translateToViewframe(Point3D p) { //TODO: test me
-		Point3D translated = Point3D.sum(p,Point3D.product(location, -1));
-		
-		Point3D p2 = new Point3D(translated.getPhi(), translated.getTheta() - direction.getTheta(), translated.getR());
-		double xzDistance = hypot(p2.x, p2.z);
-		double xzAngle = atan2(p2.z,p2.x);
-		Point3D rotated = new Point3D(xzDistance*cos(xzAngle+direction.getPhi()),p2.y,xzDistance*sin(xzAngle+direction.getPhi()));
-		
-		Point3D scaled = Point3D.product(rotated, direction.getR());
-		
-		return scaled;
+	public void render(BufferedImage canvas, World world) {
+		double w = canvas.getWidth();
+		double h = canvas.getHeight();
+		if(!canvas.getColorModel().equals(ColorModel.getRGBdefault())) {
+			throw new IllegalArgumentException("Invalid color model of image");
+		}
+		int[] data = ((DataBufferInt)canvas.getRaster().getDataBuffer()).getData();
+		for(int x = 0; x < w; x++) {
+			for(int y = 0; y < h; y++) {
+				double xDeclination = (x - w/2)/(w/2);
+				double yDeclination = (h/2 - y)/(h/2);
+				Ray r = new Ray(direction.getLocation(),
+						normalize(sum(
+								direction.getDirection(),
+								product(up,yDeclination),
+								product(right,xDeclination))));
+				data[x+(y*canvas.getWidth())] = world.traceRay(r).getRGB();
+			}
+		}
 	}
 }
