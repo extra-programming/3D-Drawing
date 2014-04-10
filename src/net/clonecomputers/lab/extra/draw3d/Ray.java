@@ -9,7 +9,7 @@ public class Ray {
 	
 	public Ray(Point3D location, Point3D directon) {
 		this.location = location;
-		this.direction = directon;
+		this.direction = norm(directon);
 	}
 	
 	public Point3D getLocation() {
