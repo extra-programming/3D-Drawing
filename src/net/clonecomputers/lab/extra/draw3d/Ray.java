@@ -52,6 +52,6 @@ public class Ray {
 	}
 	
 	public String toString() {
-		return String.format("Ray from %s to %s, with direction %s", location, sum(location,direction), direction);
+		return String.format("[%s\u2220%s]", location, direction);
 	}
 }
