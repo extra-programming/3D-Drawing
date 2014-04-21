@@ -18,6 +18,7 @@ public class World {
 	
 	public World(List<Surface> surfaces, Color voidColor) {
 		if(world != null) throw new IllegalStateException("There can only be one world");
+		world = this;
 		this.surfaces = surfaces;
 		this.voidColor = voidColor;
 	}
@@ -29,13 +30,17 @@ public class World {
 		for(Surface s: surfaces) {
 			Point3D p = s.getIntersection(r);
 			if(p == null) continue; // didn't intersect
-			double distance = dist(r.getLocation(),p);
-			if(distance < closestDistance) {
+			double distance = 
+					(r.getDirection().x != 0)? (p.x-r.getLocation().x)/r.getDirection().x:
+					(r.getDirection().y != 0)? (p.y-r.getLocation().y)/r.getDirection().y:
+				   /*r.getDirection().y != 0*/ (p.z-r.getLocation().z)/r.getDirection().z;
+			if(distance < closestDistance && distance > 0.0001) {
 				closestDistance = distance;
 				closestIntersection = p;
 				closestIntersectingSurface = s;
 			}
 		}
+		//System.out.printf("%s -> %s\n",r,closestIntersection);
 		if(closestIntersectingSurface == null) return voidColor; // didn't hit a surface
 		return closestIntersectingSurface.getRayColor(r, closestIntersection);
 	}
