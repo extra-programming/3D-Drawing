@@ -1,10 +1,16 @@
 package net.clonecomputers.lab.extra.draw3d;
 
 import static net.clonecomputers.lab.extra.draw3d.Point3D.*;
+
 import java.awt.*;
 import java.awt.image.*;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class Camera {
+	private static final int THREADNUM = 40;
+	//private ExecutorService exec = Executors.newFixedThreadPool(THREADNUM);
+	
 	private Ray direction;
 	/**
 	 * A vector that is normal to direction and right
@@ -21,18 +27,36 @@ public class Camera {
 	private double xViewSize;
 	private double yViewSize;
 	
+	private int width = 200;
+	private int height = 200;
+	private Set<RayRenderer> renderers;
+	
 	public Camera(Ray direction, double xViewSize, double yViewSize) {
 		this.xViewSize = xViewSize;
 		this.yViewSize = yViewSize;
 		this.direction = direction;
 		update();
+		regenRenderers();
+		//for(int i = 0; i < THREADNUM; i++) exec.execute(new Runnable(){public void run(){}});
 	}
 	
-	public Ray getDirection() {
+	public Ray getRay() {
 		return direction;
 	}
 	
-	public void setDirection(Ray direction) {
+	public Point3D getUp() {
+		return up;
+	}
+	
+	public Point3D getRight() {
+		return right;
+	}
+	
+	public Point3D getForwards() {
+		return direction.getDirection();
+	}
+	
+	public void setRay(Ray direction) {
 		this.direction = direction;
 		update();
 	}
@@ -60,6 +84,7 @@ public class Camera {
 		up = cross(right, direction.getDirection());
 		right = prod(norm(right), Math.tan(xViewSize));
 		up = prod(norm(up), Math.tan(yViewSize));
+		regenRenderers();
 	}
 	
 	/**
@@ -68,23 +93,78 @@ public class Camera {
 	 * @param world the world of objects to render
 	 */
 	public void render(BufferedImage canvas, World world) {
-		double w = canvas.getWidth();
-		double h = canvas.getHeight();
+		long millis = System.currentTimeMillis();
+		iWidth = canvas.getWidth();
+		iHeight = canvas.getHeight();
+		/*if(width != canvas.getWidth() || height != canvas.getHeight()) {
+			width = canvas.getWidth();
+			height = canvas.getHeight();
+			regenRenderers();
+		}*/
+		System.out.println(-(millis-(millis=System.currentTimeMillis())));
+		this.world = world;
 		if(!canvas.getColorModel().equals(ColorModel.getRGBdefault())) {
 			throw new IllegalArgumentException("Invalid color model of image");
 		}
-		int[] data = ((DataBufferInt)canvas.getRaster().getDataBuffer()).getData();
-		for(int x = 0; x < w; x++) {
-			for(int y = 0; y < h; y++) {
-				double xDeclination = (x - w/2)/(w/2);
-				double yDeclination = (h/2 - y)/(h/2);
-				Ray r = new Ray(direction.getLocation(),
-						norm(sum(
-								direction.getDirection(),
-								prod(up,yDeclination),
-								prod(right,xDeclination))));
-				data[x+(y*canvas.getWidth())] = world.traceRay(r).getRGB();
+		data = ((DataBufferInt)canvas.getRaster().getDataBuffer()).getData();
+		donenum = width*height;
+		//System.out.println(-(millis-(millis=System.currentTimeMillis())));
+		for(RayRenderer r: renderers) r.run();
+		System.out.println(-(millis-(millis=System.currentTimeMillis())));
+	}
+	
+	private void regenRenderers() {
+		renderers = new HashSet<RayRenderer>();
+		for(int x = 0; x < width; x++) {
+			for(int y = 0; y < height; y++) {
+				renderers.add(new RayRenderer(x,y));
 			}
 		}
+	}
+	
+	private int iWidth, iHeight;
+	private int donenum;
+	private int[] data;
+	private World world;
+	
+	public class RayRenderer implements Runnable {
+		private final int xd;
+		private final int yd;
+		private final int x0;
+		private final int y0;
+		private final int x1;
+		private final int y1;
+		private Ray r;
+		
+		public RayRenderer(int x, int y) {
+			this.xd = x;
+			this.yd = y;
+			this.x0 = x*(iWidth/width);
+			this.y0 = y*(iHeight/height);
+			this.x1 = (x+1)*(iWidth/width);
+			this.y1 = (y+1)*(iHeight/height);
+		}
+		
+		@Override
+		public void run() {
+			double xDeclination = (xd - width/2.)/(width/2.);
+			double yDeclination = (height/2. - yd)/(height/2.);
+			r = new Ray(direction.getLocation(),
+					norm(sum(
+							direction.getDirection(),
+							prod(up,yDeclination),
+							prod(right,xDeclination))));
+			int c = world.traceRay(r).getRGB();
+			for(int x = x0; x < x1; x++) {
+				for(int y = y0; y < y1; y++) {
+					data[x+(y*iWidth)] = c;
+					//System.out.println(x+y*iWidth);
+				}
+			}
+			/*synchronized(Camera.this) {
+				donenum--;
+			}*/
+		}
+		
 	}
 }
