@@ -48,7 +48,7 @@ public class ConvexHullTester {
 		return t;
 	}
 	
-	private static <T> T getDistinct(List<T> list, T... items) {
+	private static <T> T getDistinct(List<T> list, @SuppressWarnings("unchecked") T... items) {
 		T t = list.get(0);
 		for(int i = 0; contains(items,t); i++) {
 			t = list.get(i);
