@@ -35,7 +35,7 @@ public class SphereSection implements SurfaceGeometry {
 	}
 	
 	@Override
-	public Point3D getIntersection(Ray ray) {
+	public Point3D getIntersection(Ray ray) { // assumes ray is normalized
 		double distanceFromCenter = abs(cross(diff(center,ray.getLocation()),ray.getDirection()));
 		if(distanceFromCenter >= radiusL) return null;
 		
@@ -46,16 +46,39 @@ public class SphereSection implements SurfaceGeometry {
 		double r = radiusL;
 		Point3D omc = diff(o,c);
 		double ldomc = dot(l, omc);
-		double distance1 = -ldomc - sqrt(ldomc*ldomc - dot(omc,omc) + r*r);
-		double distance2 = -ldomc + sqrt(ldomc*ldomc - dot(omc,omc) + r*r);
-		Point3D intersection1 = sum(ray.getLocation(), prod(ray.getDirection(), distance1));
-		Point3D intersection2 = sum(ray.getLocation(), prod(ray.getDirection(), distance2));
-		
-		Point3D intersection = intersection1;
-		if(dist(intersection,sum(center,radius)) > maximumDistanceFromRadius) intersection = intersection2;
-		if(dist(intersection,sum(center,radius)) > maximumDistanceFromRadius) return null;
-		
-		return intersection;
+		double discriminant = sqrt(ldomc*ldomc - dot(omc,omc) + r*r);
+		double dist1 = -ldomc - discriminant;
+		double dist2 = -ldomc + discriminant;
+		Point3D intersection = null;
+		if(dist1 > 0) {
+			if(dist2 > 0) {
+				// both in front of ray origin: which one is the first intersection
+				Point3D intersection1 = sum(ray.getLocation(), prod(ray.getDirection(), dist1));
+				if(dist(intersection1, radius) <= maximumDistanceFromRadius) {
+					return intersection1;
+				} else {
+					Point3D intersection2 = sum(ray.getLocation(), prod(ray.getDirection(), dist2));
+					if(dist(intersection2, radius) <= maximumDistanceFromRadius) {
+						return intersection2;
+					} else {
+						return null;
+					}
+				}
+			} else {
+				intersection = sum(ray.getLocation(), prod(ray.getDirection(), dist1));
+			}
+		} else {
+			if(dist2 > 0) {
+				intersection = sum(ray.getLocation(), prod(ray.getDirection(), dist2));
+			} else {
+				return null; // both behind camera
+			}
+		}
+		if(dist(intersection, radius) <= maximumDistanceFromRadius) {
+			return intersection;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
