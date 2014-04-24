@@ -6,8 +6,8 @@
   <name>3D drawing program</name>
   <description>a program that draws 3D objects</description>
   <build>
-    <sourceDirectory>src/</sourceDirectory>
-    <testSourceDirectory>test/</testSourceDirectory>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>src</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
