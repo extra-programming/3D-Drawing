@@ -13,6 +13,10 @@ public class Point2D implements Comparable<Point2D> {
 		return String.format("(%.2f,%.2f)", x,y);
 	}
 	
+	public static double dot(Point2D a, Point2D b) {
+		return (a.x*b.x) + (a.y*b.y);
+	}
+	
 	public static double dot(Point2D... points) {
 		double x=1,y=1;
 		for(Point2D p: points) {
@@ -21,9 +25,15 @@ public class Point2D implements Comparable<Point2D> {
 		}
 		return x+y;
 	}
+	
 	public static double cross(Point2D a, Point2D b) {
 		return a.x*b.y - b.x*a.y;
 	}
+	
+	public static Point2D sum(Point2D a, Point2D b) {
+		return new Point2D(a.x + b.x, a.y + b.y);
+	}
+	
 	public static Point2D sum(Point2D... points) {
 		double x=0,y=0;
 		for(Point2D p: points) {
@@ -32,23 +42,28 @@ public class Point2D implements Comparable<Point2D> {
 		}
 		return new Point2D(x,y);
 	}
+	
 	public static double abs(Point2D a) {
-		return sqrt(dot(a,a));
+		return sqrt((a.x*a.x) + (a.y*a.y));
 	}
+	
 	public static Point2D norm(Point2D a) {
 		return prod(a,1/abs(a));
 	}
+	
 	public static Point2D diff(Point2D a, Point2D b) {
-		return sum(a,prod(b,-1));
+		return new Point2D(a.x - b.x, a.y - b.y);
 	}
+	
 	public static Point2D prod(Point2D a, double b) {
 		return new Point2D(
 			a.x * b,
 			a.y * b
 		);
 	}
+	
 	public static double dist(Point2D a, Point2D b) {
-		return abs(diff(a,b));
+		return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y));
 	}
 	
 	public boolean equals(Object o) {

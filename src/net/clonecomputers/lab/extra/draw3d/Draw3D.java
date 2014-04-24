@@ -58,7 +58,7 @@ public class Draw3D extends JPanel implements Runnable, KeyListener, MouseMotion
 
 	@Override
 	public void run() {
-		camera = new Camera(new Ray(new Point3D(-100, 0, 0), new Point3D(1, 0, 0)), 40*Math.PI/180, 40*Math.PI/180);
+		camera = new Camera(canvas, new Ray(new Point3D(-100, 0, 0), new Point3D(1, 0, 0)), 40*Math.PI/180, 40*Math.PI/180);
 		world = new World(Arrays.asList(
 				new Surface(
 					new SphereSection(new Point3D(0, 6, 0), new Point3D(-10,20,20), Math.PI/3),
@@ -74,14 +74,14 @@ public class Draw3D extends JPanel implements Runnable, KeyListener, MouseMotion
 				)
 			), new Color(.2f,.3f,.8f));
 		long millis = System.currentTimeMillis();
-		camera.render(canvas, world);
+		camera.render(world);
 		//System.out.println(System.currentTimeMillis() - millis);
 		this.repaint();
 		
 		while(true) {
 			synchronized(this) {
 				updatePos();
-				camera.render(canvas, world);
+				camera.render(world);
 			}
 			repaint();
 			try {

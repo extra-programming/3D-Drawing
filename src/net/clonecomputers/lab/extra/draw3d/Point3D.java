@@ -17,6 +17,10 @@ public class Point3D implements Comparable<Point3D> {
 		return String.format("(%.2f,%.2f,%.2f)", x,y,z);
 	}
 	
+	public static double dot(Point3D a, Point3D b) {
+		return (a.x*b.x) + (a.y*b.y) + (a.z*b.z);
+	}
+	
 	public static double dot(Point3D... points) {
 		double x=1,y=1,z=1;
 		for(Point3D p: points) {
@@ -35,6 +39,10 @@ public class Point3D implements Comparable<Point3D> {
 		);
 	}
 	
+	public static Point3D sum(Point3D a, Point3D b) {
+		return new Point3D(a.x+b.x, a.y+b.y, a.z+b.z);
+	}
+	
 	public static Point3D sum(Point3D... points) {
 		double x=0,y=0,z=0;
 		for(Point3D p: points) {
@@ -46,29 +54,26 @@ public class Point3D implements Comparable<Point3D> {
 	}
 
 	public static Point3D diff(Point3D a, Point3D b) {
-		return sum(a,prod(b,-1));
+		return new Point3D(a.x-b.x, a.y-b.y, a.z-b.z);
 	}
 	
 	public static double abs(Point3D a) {
-		return sqrt(dot(a,a));
+		return sqrt((a.x*a.x) + (a.y*a.y) + (a.z*a.z));
 	}
 	
 	public static Point3D norm(Point3D a) {
-		return prod(a,1/abs(a));
+		double abs = abs(a);
+		return new Point3D(a.x / abs, a.y / abs, a.z / abs);
 	}
 	
 	public static Point3D prod(Point3D a, double b) {
-		return new Point3D(
-			a.x * b,
-			a.y * b,
-			a.z * b
-		);
+		return new Point3D(a.x * b, a.y * b, a.z * b);
 	}
 	
 	public static double dist(Point3D a, Point3D b) {
-		return abs(diff(a,b));
+		return sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z));
 	}
-	
+
 	public boolean equals(Object o) {
 		return o instanceof Point3D && o != null && ((Point3D)o).x == x && ((Point3D)o).y == y && ((Point3D)o).z == z;
 	}

@@ -31,10 +31,22 @@ public class Camera {
 	private int height = 200;
 	private Set<RayRenderer> renderers;
 	
-	public Camera(Ray direction, double xViewSize, double yViewSize) {
+	private BufferedImage canvas;
+	private int iWidth, iHeight;
+	private int[] data;
+	
+	private World world;
+	
+	public Camera(BufferedImage canvas, Ray direction, double xViewSize, double yViewSize) {
 		this.xViewSize = xViewSize;
 		this.yViewSize = yViewSize;
 		this.direction = direction;
+		iWidth = canvas.getWidth();
+		iHeight = canvas.getHeight();
+		if(!canvas.getColorModel().equals(ColorModel.getRGBdefault())) {
+			throw new IllegalArgumentException("Invalid color model of image");
+		}
+		data = ((DataBufferInt)canvas.getRaster().getDataBuffer()).getData();
 		update();
 		regenRenderers();
 		//for(int i = 0; i < THREADNUM; i++) exec.execute(new Runnable(){public void run(){}});
@@ -59,6 +71,7 @@ public class Camera {
 	public void setRay(Ray direction) {
 		this.direction = direction;
 		update();
+		//regenRenderers();
 	}
 
 	/**
@@ -68,6 +81,7 @@ public class Camera {
 	public void setXViewSize(double xViewSize) {
 		this.xViewSize = xViewSize;
 		update();
+		regenRenderers();
 	}
 	
 	/**
@@ -77,6 +91,7 @@ public class Camera {
 	public void setYViewSize(double yViewSize) {
 		this.yViewSize = yViewSize;
 		update();
+		regenRenderers();
 	}
 	
 	public void update() {
@@ -84,7 +99,7 @@ public class Camera {
 		up = cross(right, direction.getDirection());
 		right = prod(norm(right), Math.tan(xViewSize));
 		up = prod(norm(up), Math.tan(yViewSize));
-		regenRenderers();
+		//regenRenderers();
 	}
 	
 	/**
@@ -92,25 +107,16 @@ public class Camera {
 	 * @param canvas must have the default INT_ARGB color model
 	 * @param world the world of objects to render
 	 */
-	public void render(BufferedImage canvas, World world) {
-		long millis = System.currentTimeMillis();
-		iWidth = canvas.getWidth();
-		iHeight = canvas.getHeight();
+	public void render(World world) {
 		/*if(width != canvas.getWidth() || height != canvas.getHeight()) {
 			width = canvas.getWidth();
 			height = canvas.getHeight();
 			regenRenderers();
 		}*/
-		System.out.println(-(millis-(millis=System.currentTimeMillis())));
+		long millis = System.currentTimeMillis();
 		this.world = world;
-		if(!canvas.getColorModel().equals(ColorModel.getRGBdefault())) {
-			throw new IllegalArgumentException("Invalid color model of image");
-		}
-		data = ((DataBufferInt)canvas.getRaster().getDataBuffer()).getData();
-		donenum = width*height;
-		//System.out.println(-(millis-(millis=System.currentTimeMillis())));
 		for(RayRenderer r: renderers) r.run();
-		System.out.println(-(millis-(millis=System.currentTimeMillis())));
+		System.out.println(System.currentTimeMillis() - millis);
 	}
 	
 	private void regenRenderers() {
@@ -121,11 +127,6 @@ public class Camera {
 			}
 		}
 	}
-	
-	private int iWidth, iHeight;
-	private int donenum;
-	private int[] data;
-	private World world;
 	
 	public class RayRenderer implements Runnable {
 		private final int xd;
