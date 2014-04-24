@@ -69,7 +69,7 @@ public class Draw3D extends JPanel implements Runnable, KeyListener, MouseMotion
 					new SolidColor(Color.RED)
 				),
 				new Surface(
-					new SphereSection(new Point3D(-40,0,0),new Point3D(-40,0,0),Math.PI/4),
+					new SphereSection(new Point3D(-20,0,0),new Point3D(-40,0,0),Math.PI/4),
 					new CompoundTexture(new SolidColor(Color.MAGENTA),.4,.2,.74)
 				)
 			), new Color(.2f,.3f,.8f));
