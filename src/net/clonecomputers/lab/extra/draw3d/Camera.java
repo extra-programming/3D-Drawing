@@ -8,8 +8,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class Camera {
-	private static final int THREADNUM = 40;
-	//private ExecutorService exec = Executors.newFixedThreadPool(THREADNUM);
+	private static final int THREADNUM = 20;
+	private ExecutorService exec = Executors.newFixedThreadPool(THREADNUM);
 	
 	private Ray direction;
 	/**
@@ -115,7 +115,12 @@ public class Camera {
 		}*/
 		long millis = System.currentTimeMillis();
 		this.world = world;
-		for(RayRenderer r: renderers) r.run();
+		try {
+			exec.invokeAll(renderers);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		//for(RayRenderer r: renderers) r.call();
 		System.out.println(System.currentTimeMillis() - millis);
 	}
 	
@@ -128,7 +133,7 @@ public class Camera {
 		}
 	}
 	
-	public class RayRenderer implements Runnable {
+	public class RayRenderer implements Callable<Object> {
 		private final int xd;
 		private final int yd;
 		private final int x0;
@@ -147,7 +152,7 @@ public class Camera {
 		}
 		
 		@Override
-		public void run() {
+		public Object call() {
 			double xDeclination = (xd - width/2.)/(width/2.);
 			double yDeclination = (height/2. - yd)/(height/2.);
 			r = new Ray(direction.getLocation(),
@@ -165,6 +170,7 @@ public class Camera {
 			/*synchronized(Camera.this) {
 				donenum--;
 			}*/
+			return null;
 		}
 		
 	}
